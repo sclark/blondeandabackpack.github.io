@@ -60,6 +60,202 @@
     a { color: inherit; text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
     a:hover { text-decoration-color: var(--accent); }
 
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    [id] { scroll-margin-top: 80px; }
+
+    /* Outline: slide-out drawer on narrow screens, pinned in the margin on wide ones */
+    .toc {
+      position: fixed;
+      top: 56px;
+      bottom: 0;
+      left: 0;
+      z-index: 30;
+      width: min(300px, 84vw);
+      padding: 20px 20px 32px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(0, 0, 0, .18);
+      font-family: var(--sans);
+      font-size: .95rem;
+      line-height: 1.35;
+      transform: translateX(-100%);
+      visibility: hidden;
+      transition: transform .25s ease, visibility 0s linear .25s;
+    }
+
+    .toc-open .toc {
+      transform: none;
+      visibility: visible;
+      transition: transform .25s ease;
+    }
+
+    .toc-backdrop {
+      position: fixed;
+      inset: 56px 0 0 0;
+      z-index: 20;
+      background: rgba(0, 0, 0, .35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    .toc-open .toc-backdrop { opacity: 1; pointer-events: auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 56px;
+      padding: 0 max(16px, calc(50% - 364px));
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--sans);
+    }
+
+    .toc-open .topbar { background: var(--bg); }
+
+    .toc-toggle {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      margin-left: -10px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      background: none;
+      border: 0;
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .toc-toggle:hover { background: var(--surface); }
+
+    .topbar-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      font-size: .9rem;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .topbar-title svg { width: 18px; height: 18px; flex: none; color: var(--accent); }
+
+    .topbar-title span { overflow: hidden; text-overflow: ellipsis; }
+
+    .burger,
+    .burger::before,
+    .burger::after {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 1px;
+      background: currentColor;
+      transition: transform .2s ease, background-color .2s ease;
+    }
+
+    .burger { position: relative; }
+
+    .burger::before,
+    .burger::after {
+      content: "";
+      position: absolute;
+      left: 0;
+    }
+
+    .burger::before { top: -6px; }
+    .burger::after { top: 6px; }
+
+    .toc-open .burger { background-color: transparent; }
+    .toc-open .burger::before { transform: translateY(6px) rotate(45deg); }
+    .toc-open .burger::after { transform: translateY(-6px) rotate(-45deg); }
+
+    .toc-head { margin: 0 0 16px; }
+
+    .toc-label {
+      margin: 0;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    .toc ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .toc > ol { border-left: 1px solid var(--border); }
+
+    .toc a {
+      display: block;
+      padding: 8px 0 8px 14px;
+      margin-left: -1px;
+      border-left: 2px solid transparent;
+      color: var(--text-soft);
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--text); }
+
+    .toc a.active {
+      color: var(--text);
+      font-weight: 600;
+      border-left-color: var(--accent);
+    }
+
+    .toc ol ol a {
+      padding-left: 26px;
+      font-size: .85em;
+      color: var(--text-faint);
+    }
+
+    .toc ol ol a:hover, .toc ol ol a.active { color: var(--text); }
+
+    @media (min-width: 1240px) {
+      .toc,
+      .toc-open .toc {
+        top: 112px;
+        bottom: auto;
+        left: calc(50% - 596px);
+        z-index: auto;
+        width: 184px;
+        max-height: calc(100vh - 144px);
+        padding: 0;
+        background: none;
+        border: 0;
+        box-shadow: none;
+        font-size: .8rem;
+        transform: none;
+        visibility: visible;
+        transition: none;
+      }
+
+      .toc-toggle, .toc-backdrop { display: none; }
+
+      .topbar { padding: 0 calc(50% - 596px); }
+
+      .toc-head { margin: 0 0 12px; }
+
+      .toc a { padding: 5px 0 5px 14px; }
+    }
+
     /* Layout */
     .wrap {
       max-width: 760px;
@@ -469,7 +665,7 @@
 
     @media (max-width: 600px) {
       body { font-size: 1.125rem; }
-      header.hero { padding: 44px 0 32px; }
+      header.hero { padding: 36px 0 32px; }
       .dek { font-size: 1.2rem; }
       .pull { font-size: 1.35rem; }
       .articles > li { grid-template-columns: 1fr; }
@@ -479,9 +675,25 @@
       .card-head { padding-left: 12px; padding-right: 12px; }
     }
 
+    @media (min-width: 1240px) {
+      header.hero { padding-top: 56px; }
+    }
   </style>
 </head>
-<body>
+<body id="top">
+
+  <div class="topbar">
+    <button class="toc-toggle" type="button" aria-controls="toc" aria-expanded="false" aria-label="Open outline"><span class="burger" aria-hidden="true"></span></button>
+    <a class="topbar-title" href="#top">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <polygon points="12,1 14,10 12,12 10,10"/>
+        <polygon points="23,12 14,14 12,12 14,10"/>
+        <polygon points="12,23 10,14 12,12 14,14"/>
+        <polygon points="1,12 10,10 12,12 10,14"/>
+      </svg>
+      <span>McAllister Treaty Organization</span>
+    </a>
+  </div>
 
   <main class="wrap">
 
@@ -498,7 +710,32 @@
       </div>
     </header>
 
-    <article class="letter">
+    <div class="toc-backdrop" aria-hidden="true"></div>
+    <nav class="toc" id="toc" aria-label="Outline">
+      <div class="toc-head">
+        <p class="toc-label">Outline</p>
+      </div>
+      <ol>
+        <li><a href="#letter">The letter</a></li>
+        <li><a href="#status">Status of follow relations</a></li>
+        <li>
+          <a href="#treaty">The Treaty of Mutual Follow</a>
+          <ol>
+            <li><a href="#article-i">I. Establishment</a></li>
+            <li><a href="#article-ii">II. Reciprocity</a></li>
+            <li><a href="#article-iii">III. Strategic Patience</a></li>
+            <li><a href="#article-iv">IV. Open Door Policy</a></li>
+            <li><a href="#article-v">V. Collective Defense</a></li>
+            <li><a href="#article-vi">VI. Proportionality</a></li>
+          </ol>
+        </li>
+        <li><a href="#path-to-peace">The path to peace</a></li>
+        <li><a href="#terms">Terms of resolution</a></li>
+        <li><a href="#signatories">Signatories</a></li>
+      </ol>
+    </nav>
+
+    <article class="letter" id="letter">
 
       <p class="salutation">To the account holder of <a href="https://www.instagram.com/blondeandabackpack/" target="_blank" rel="noopener">@blondeandabackpack</a>, and to the man behind it, whom we have long counted among our dearest friends:</p>
 
@@ -510,7 +747,7 @@
 
       <p>We have since reviewed the evidence. We have consulted your following list. We have refreshed it. We have closed the application, reopened it, and refreshed it again. We have, in one instance that we would prefer not to discuss further, checked it from a second phone. The findings are unambiguous and are summarized below for the historical record.</p>
 
-      <div class="card" role="region" aria-label="Status of follow relations">
+      <div class="card" id="status" role="region" aria-label="Status of follow relations">
         <div class="card-head">
           <span>Status of follow relations</span>
           <span class="tag">As of today</span>
@@ -540,38 +777,38 @@
 
       <p>Accordingly, and after careful deliberation, the undersigned have entered into the following binding agreement, the text of which we reproduce here in full so that there may be no misunderstanding as to its terms or its consequences.</p>
 
-      <h2>The Treaty of Mutual Follow</h2>
+      <h2 id="treaty">The Treaty of Mutual Follow</h2>
 
       <ol class="articles">
-        <li>
+        <li id="article-i">
           <span class="art-num">ART. I</span>
           <div>
             <h3>Establishment</h3>
             <p>The Parties hereby establish the McAllister Treaty Organization (hereinafter &ldquo;the Alliance&rdquo;), a defensive pact founded upon the principles of friendship, reciprocity, and the basic dignity of the follow.</p>
           </div>
         </li>
-        <li>
+        <li id="article-ii">
           <span class="art-num">ART. II</span>
           <div>
             <h3>The Principle of Reciprocity</h3>
             <p>The Parties affirm that a follow, extended in good faith by a friend, creates a reasonable expectation of return within a reasonable period, said period being defined herein as &ldquo;whenever he next opens the app.&rdquo;</p>
           </div>
         </li>
-        <li>
+        <li id="article-iii">
           <span class="art-num">ART. III</span>
           <div>
             <h3>Strategic Patience</h3>
             <p>The Alliance does not seek escalation. All existing follows maintained by the Parties shall remain in place for the duration of diplomatic efforts, as a gesture of goodwill.</p>
           </div>
         </li>
-        <li>
+        <li id="article-iv">
           <span class="art-num">ART. IV</span>
           <div>
             <h3>Open Door Policy</h3>
             <p>Membership in the Alliance shall remain open to any person who follows <a href="https://www.instagram.com/blondeandabackpack/" target="_blank" rel="noopener">@blondeandabackpack</a> and has not been followed back. Accession shall occur upon signature of this letter.</p>
           </div>
         </li>
-        <li class="key">
+        <li class="key" id="article-v">
           <span class="art-num">ARTICLE V &middot; COLLECTIVE DEFENSE</span>
           <div>
             <blockquote>An unfollow against one of us shall be considered an unfollow against all of us.</blockquote>
@@ -582,7 +819,7 @@
             </ol>
           </div>
         </li>
-        <li>
+        <li id="article-vi">
           <span class="art-num">ART. VI</span>
           <div>
             <h3>Proportionality</h3>
@@ -591,7 +828,7 @@
         </li>
       </ol>
 
-      <h2>The path to peace</h2>
+      <h2 id="path-to-peace">The path to peace</h2>
 
       <p>We wish to emphasize that this crisis may be resolved swiftly, honorably, and at no cost to either party. The Alliance requests only the following:</p>
 
@@ -601,7 +838,7 @@
 
       <p>In the interest of removing all possible obstacles, we note that the Follow button is blue, is located near the top of each profile, and requires a single tap. We stand ready to provide further technical assistance should it be required, up to and including an in-person demonstration.</p>
 
-      <h2>Terms of resolution</h2>
+      <h2 id="terms">Terms of resolution</h2>
 
       <p>Upon receipt of the follows, the following sequence of events shall take effect.</p>
 
@@ -685,5 +922,53 @@
 
 
   </main>
+
+  <script>
+    // Highlight the outline entry for the section currently being read.
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+      var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+      var ticking = false;
+
+      function update() {
+        ticking = false;
+        var current = 0;
+        var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+        targets.forEach(function (el, i) {
+          if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.3) current = i;
+        });
+        if (atBottom) current = targets.length - 1;
+        links.forEach(function (a, i) { a.classList.toggle('active', i === current); });
+      }
+
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+
+      var root = document.documentElement;
+      var toggle = document.querySelector('.toc-toggle');
+      var wide = window.matchMedia('(min-width: 1240px)');
+
+      function setOpen(open) {
+        root.classList.toggle('toc-open', open);
+        root.style.overflow = open ? 'hidden' : '';
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close outline' : 'Open outline');
+      }
+
+      toggle.addEventListener('click', function () { setOpen(!root.classList.contains('toc-open')); });
+      document.querySelector('.toc-backdrop').addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && root.classList.contains('toc-open')) { setOpen(false); toggle.focus(); }
+      });
+      links.forEach(function (a) {
+        a.addEventListener('click', function () { if (!wide.matches) setOpen(false); });
+      });
+      function onWide() { if (wide.matches) setOpen(false); }
+      if (wide.addEventListener) wide.addEventListener('change', onWide); else wide.addListener(onWide);
+    })();
+  </script>
 </body>
 </html>
